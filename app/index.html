@@ -1,0 +1,31 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/darkly/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JS -->
+  <!-- load angular, nganimate, and ui-router -->
+  <script src="angular.js"></script>
+  <script src="angular-ui-router.js"></script>
+  <script src="angular-animate.js"></script>
+  <script src="scripts/app.js"></script>
+
+</head>
+
+<!-- apply our angular app -->
+<body ng-app="formApp">
+
+<div class="container">
+
+  <!-- views will be injected here -->
+  <div ui-view></div>
+
+</div>
+
+</body>
+</html>
