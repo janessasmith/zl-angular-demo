@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AngularJS 独立作用域demo01</title>
+  <meta name="description" content="">
+  <!-- CSS -->
+  <!-- build:css css/vendor.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <!-- bower:css -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- JS -->
+  <!--load angular, nganimate, and ui-router-->
+  <!-- bower:js -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <!-- build:js scripts/vendor.js -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/router.js"></script>
+  <script src="scripts/controllers/home.js"></script>
+
+</head>
+
+<body ng-app="app">
+  <!--这段代码是不能够工作的，因为用了一个隔离的scope，指令内部的{{color}}表达式被隔离在指令内部的scope中（不是父scope）。-->
+  <!--但是外面的输入框元素中的ng-model指令是指向父scope中的color属性的，所以，我们需要一种方式来绑定隔离scope和父scope中的这两个参数-->
+  <!--在AngularJS中，这种数据绑定可以通过为指令所在的HTML元素添加属性为指令定义对象中配置相应的scope属性来实现。-->
+
+  <!--<div ng-controller="MainCtrl">
+    <input type="text" ng-model="color" placeholder="Enter a Color"/>
+    <hello-world></hello-world>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    appModule.controller('MainCtrl', function($scope) {
+
+    })
+    .directive('helloWorld', function() {
+      return {
+        scope: {},
+        restrict: 'AE',
+        replace: true,
+        template: '<p style="background-color:{{color}}">Hello World</p>',
+        link: function(scope, elem, attrs) {
+          elem.bind('click', function() {
+            elem.css('background-color', 'white');
+            scope.$apply(function() {
+              scope.color = "white";
+            });
+          });
+          elem.bind('mouseover', function() {
+            elem.css('cursor', 'pointer');
+          });
+        }
+      };
+    });
+  </script>-->
+
+  <!--<div>
+    <input type="text" ng-model="color" placeholder="Enter a Color"/>
+    <app-test color-attr="{{color}}"></app-test>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    //方法一：使用@实现单向文本绑定
+    //单向绑定，是因为在这种方式下，你只能将字符串（使用表达式{{}}）传递给参数。当父scope的属性变化时，你的隔离scope模型中的属性值跟着变化。
+    //你甚至可以在指令内部监控这个scope属性的变化，并且触发一些任务。
+    appModule.directive('appTest', function() {
+      return {
+        scope: {
+          color: '@colorAttr'
+        },
+        restrict: 'AE',
+        replace: true,
+        template: '<p style="background-color:{{color}}">Hello World</p>',
+        link: function(scope, elem, attrs) {
+          elem.bind('click', function() {
+            elem.css('background-color', 'white');
+            scope.$apply(function() {
+              scope.color = "white";
+            });
+          });
+          elem.bind('mouseover', function() {
+            elem.css('cursor', 'pointer');
+          });
+        }
+      };
+    });
+  </script>-->
+
+  <div ng-controller="MainCtrl">
+    <app-test></app-test>
+    <app-test></app-test>
+    <app-test></app-test>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    appModule.directive('appTest', function() {
+      return {
+        restrict: 'AE',
+        //独立作用域：
+        //当自己创建某个指令时，这个指令肯定不可能只使用一次，是要重复多次使用，有的在一个页面内或者一个控制器内需要使用多次，这时候独立作用域就派上用场了
+        scope: {},
+        template: '<div><input type="text" ng-model="username"/>{{username}}</div>',
+        replace: true
+
+      };
+    });
+    appModule.controller('MainCtrl', function($scope) {
+
+    });
+  </script>
+</body>
+</html>

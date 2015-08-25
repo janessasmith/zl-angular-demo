@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AngularJS 独立作用域demo02</title>
+  <meta name="description" content="">
+  <!-- CSS -->
+  <!-- build:css css/vendor.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <!-- bower:css -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- JS -->
+  <!--load angular, nganimate, and ui-router-->
+  <!-- bower:js -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <!-- build:js scripts/vendor.js -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/router.js"></script>
+  <script src="scripts/controllers/home.js"></script>
+
+</head>
+
+<body ng-app="app">
+  <!--自定义标签或者进行扩展时，会有这样的需求场景，要在标签中添加一些属性，实现一些复杂功能。
+  设置app-test标签say="xxx"在这里传入，但是我们如何区分它传入的是变量？字符串？还是方法呢？
+  因此，AngularJS有了三种自定义的作用域绑定方式：
+    1. 基于字符串的绑定：使用"@"操作符，双引号内的内容做字符串进行绑定
+    2. 基于变量的绑定：使用"="操作符，绑定的内容是个变量
+    3. 基于方法的绑定：使用"&"操作符，绑定的内容是个方法-->
+
+  <!--方法一：基于字符串的绑定-->
+  <!--<div ng-controller="MainCtrl">
+    <app-test say="test string"></app-test>
+    <app-test say="{{str2}}"></app-test>
+    <app-test say="test{}"></app-test>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    appModule.directive('appTest', function() {
+      return {
+        restrict: 'AE',
+        scope: {
+          //添加scope:{say:'@'}这个键值属性，这样AngularJS会识别say所绑定的东西是一个字符串
+          say: '@'
+        },
+        template: '<div>{{say}}</div>',
+        replace: true
+
+      };
+    });
+    appModule.controller('MainCtrl', ['$scope', function($scope) {
+      $scope.str1 = "Hello";
+      $scope.str2 = "Janessa";
+      $scope.str3 = "Smith";
+    }]);
+  </script>-->
+
+  <!--方法二：基于变量的绑定-->
+  <!--
+    1. 定义了一个变量ng-model="username"
+    2. username对应的是输入框输入的值
+    3. 然后把这个变量当做一个参数传递给app-test这个标签的name属性
+    4. 在app-test标签中，又把这个name绑定到模板中的一个输入框内
+  -->
+  <!--<div ng-controller="MainCtrl">
+    ctrl: <input type="text" ng-model="username"/>
+    directive: <app-test name="username"></app-test>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    appModule.directive('appTest', function() {
+      return {
+        restrict: 'AE',
+        scope: {
+          //添加scope:{name:'='}这个键值属性，这样AngularJS会识别name所绑定的东西是一个变量
+          name: '='
+        },
+        template: '<input type="text" ng-model="name" />',
+        replace: true
+
+      };
+    });
+    appModule.controller('MainCtrl', ['$scope', function($scope) {
+      $scope.username = 'Hello My Name is Janessa Smith~';
+    }]);
+  </script>-->
+
+  <!--方法三：基于操作符的绑定-->
+  <!--通过自定义标签传入三个方法，在指令的定义中，模板替换成了一个输入框，一个按钮-->
+  <div ng-controller="MainCtrl">
+    <app-test say="sayHello(name)"></app-test>
+    <app-test say="sayNo(name)"></app-test>
+    <app-test say="sayYes(name)"></app-test>
+  </div>
+  <script>
+    var appModule = angular.module('app', []);
+    appModule.directive('appTest', function() {
+      return {
+        restrict: 'AE',
+        scope: {
+          //添加scope:{say:'&'}这个键值属性，这样AngularJS会识别say所绑定的东西是一个操作符
+          say: '&'
+        },
+        template:'<input type="text" ng-model="username"/><br>' + '<button ng-click="say({name:username})">click</button><br>'
+
+      };
+    });
+    appModule.controller('MainCtrl', ['$scope', function($scope) {
+      $scope.sayHello = function(name) {
+        console.log("hello !" + name);
+      };
+      $scope.sayNo = function(name) {
+        console.log("no !" + name);
+      };
+      $scope.sayYes = function(name) {
+        console.log("yes !" + name);
+      };
+    }]);
+  </script>
+</body>
+</html>
